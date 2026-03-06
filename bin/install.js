@@ -116,7 +116,7 @@ if (flagAll) {
 
 // --- Header ---
 console.log();
-console.log(bold('Role Dispatcher') + ' - 185+ IT specialist roles');
+console.log(bold('Role Dispatcher') + ' - 209+ IT specialist roles');
 console.log();
 
 // --- No targets found ---

@@ -1,9 +1,10 @@
 <div align="center">
 
-# 🤖 Role Dispatcher
+# Role Dispatcher
 
-**Turn your AI coding tool into a team of 209+ IT specialists.**
-One request → the right experts → instant collaboration.
+### Turn your AI coding tool into a team of 209+ IT specialists.
+
+One request. The right experts. Instant collaboration.
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![npm](https://img.shields.io/npm/v/@alexgabbia/role-dispatcher)](https://www.npmjs.com/package/@alexgabbia/role-dispatcher)
@@ -16,23 +17,33 @@ One request → the right experts → instant collaboration.
 
 ---
 
-## 📖 What is this?
+**Why generic AI answers when you can get specialist-grade expertise?**
 
-A **skill for Claude Code, Codex CLI, and OpenCode** that analyzes your requests, identifies the most relevant IT specialist roles, and dispatches specialized agents that collaborate to give you expert-level answers.
+Role Dispatcher is a **skill for Claude Code, Codex CLI, and OpenCode** that analyzes your requests, identifies the best IT specialist roles from 209+ professionals across 14 categories, and dispatches specialized agents that collaborate to give you expert-level answers.
 
-Instead of getting a generic response, you get answers from the perspective of the actual professionals who would handle that work in a real company.
+Instead of a one-size-fits-all response, you get answers from the **actual professionals** who would handle that work in a real company — complete with domain-specific skills, tools, and perspectives.
 
-### ✅ Compatibility
+### What makes it different
+
+| | Without Role Dispatcher | With Role Dispatcher |
+|---|---|---|
+| **Expertise** | Generic AI response | Specialist-grade from 209+ roles |
+| **Multi-domain tasks** | You manage context yourself | Auto-dispatches 1-3 agents that collaborate |
+| **Quality control** | Hope for the best | Confidence scoring + Review Agent validation |
+| **Model selection** | One size fits all | Right model (Haiku/Sonnet/Opus) per task complexity |
+| **Your control** | Take what you get | Propose & Confirm — change roles or model before dispatch |
+
+### Compatibility
 
 | Tool | Status | Skills Directory |
 |------|--------|-----------------|
-| Claude Code | ✅ Supported | `~/.claude/skills/` |
-| Codex CLI | ✅ Supported | `~/.codex/skills/` |
-| OpenCode | ✅ Supported | `~/.config/opencode/skills/` |
+| Claude Code | Supported | `~/.claude/skills/` |
+| Codex CLI | Supported | `~/.codex/skills/` |
+| OpenCode | Supported | `~/.config/opencode/skills/` |
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 ### npx (Recommended)
 
@@ -40,9 +51,9 @@ Instead of getting a generic response, you get answers from the perspective of t
 npx @alexgabbia/role-dispatcher
 ```
 
-This auto-detects which tools you have installed and copies the skill to the right directory.
+Auto-detects which tools you have installed and copies the skill to the right directory.
 
-You can also target a specific tool:
+Target a specific tool:
 
 ```bash
 npx @alexgabbia/role-dispatcher --claude     # Claude Code only
@@ -51,9 +62,7 @@ npx @alexgabbia/role-dispatcher --opencode   # OpenCode only
 npx @alexgabbia/role-dispatcher --all        # All tools
 ```
 
-### 🔧 Manual Installation
-
-Copy the skill folder to your tool's skills directory:
+### Manual Installation
 
 ```bash
 # Claude Code
@@ -69,7 +78,7 @@ mkdir -p ~/.config/opencode/skills/role-dispatcher
 cp -r skill/role-dispatcher/* ~/.config/opencode/skills/role-dispatcher/
 ```
 
-### 📜 Script Installation
+### Script Installation
 
 ```bash
 # macOS / Linux
@@ -79,19 +88,22 @@ chmod +x install.sh && ./install.sh
 .\install.ps1
 ```
 
-### ✔️ Verify
+### Verify
 
 Open Claude Code and make a technical request. You should see the dispatcher propose agents and wait for your confirmation:
 
 ```
 Proposed dispatch:
 - Backend Developer: REST API design and implementation
+  Key skills: Node.js, Python, Java, SQL, REST, GraphQL, microservices
 - Frontend Developer: React dashboard with user management
+  Key skills: HTML, CSS, JavaScript, React, Vue, Angular, responsive design
 
 Model: claude-sonnet-4-6 (medium complexity)
+Execution: MIXED
 
 Proceed? You can:
-- Enter/yes to proceed as proposed
+- yes to proceed as proposed
 - Change roles: e.g. "use Security Engineer instead of Backend Developer"
 - Change model: e.g. "use opus" or "use haiku"
 - Both: e.g. "use only Frontend Developer with sonnet"
@@ -99,21 +111,7 @@ Proceed? You can:
 
 ---
 
-## ⭐ Features
-
-- 🧠 **209+ IT roles** across 13 professional categories, from Frontend Developer to CISO
-- 🌍 **Language-agnostic matching** — write in any language, Claude understands and matches internally
-- 🎯 **Smart dispatching** — 1 to 3 specialist agents per request, based on complexity
-- 🤝 **Propose & Confirm** — review and override roles and model before agents are dispatched
-- 🔄 **Collaboration protocol** — agents coordinate through handoff notes and dependency checks
-- 🔍 **Review Agent** — automatically validates multi-agent outputs for conflicts and completeness
-- 📊 **Confidence scoring** — every agent rates their confidence (HIGH/MEDIUM/LOW), with automatic escalation on LOW
-- ⚡ **Model selection** — suggests the right Claude model (Haiku/Sonnet/Opus) based on task complexity
-- 📚 **Real examples** — includes 4 complete dispatching scenarios as reference
-
----
-
-## ⚙️ How It Works
+## How It Works
 
 <div align="center">
 
@@ -121,38 +119,40 @@ Proceed? You can:
 
 </div>
 
-1. 🔎 **Analyze** — Detects your language, matches your request against the English keyword index
-2. 🗂️ **Match** — Identifies relevant categories from the 13 available
-3. 🎯 **Select** — Picks 1-3 specialist roles and determines the optimal model
-4. 👤 **Propose & Confirm** — Shows you the proposed roles and model, waits for your approval or changes
-5. 🚀 **Dispatch** — Launches agents with structured prompts including expertise profiles and behavioral guidelines
-6. 🔍 **Review** — (2+ agents) Validates completeness, detects conflicts, verifies integration
-7. ✅ **Synthesize** — Merges outputs into a single coherent answer with aggregate confidence
+1. **Analyze** — Detects your language, scans request against keyword index + semantic inference
+2. **Match** — Identifies relevant categories from the 14 available
+3. **Select** — Picks 1-3 specialist roles using Key Skills matching, determines optimal model
+4. **Propose & Confirm** — Shows proposed roles (with key skills) and model, waits for your approval or changes
+5. **Dispatch** — Launches agents with structured prompts including expertise profiles and behavioral guidelines
+6. **Review** — (2+ agents) Validates completeness, detects conflicts, verifies integration
+7. **Synthesize** — Merges outputs into a single coherent answer with aggregate confidence
 
 ---
 
-## 📋 Categories
+## Categories
 
 | # | Category | Roles | Examples |
 |---|----------|-------|---------|
-| 01 | 💻 Software Development | 13 | Full-Stack, Backend, Frontend, Mobile, API, Desktop |
-| 02 | 🎨 Design & UX | 11 | Product Designer, UX/UI Designer, UX Researcher |
-| 03 | 📊 Data & AI | 14 | Data Scientist, ML Engineer, NLP Engineer, MLOps |
-| 04 | 🔒 Cybersecurity | 15 | CISO, Security Architect, Penetration Tester, SOC |
-| 05 | ☁️ Infrastructure & Ops | 15 | Cloud Engineer, DevOps, SRE, DBA, Kubernetes |
-| 06 | 📈 Management | 17 | CTO, Product Manager, Scrum Master, Agile Coach |
-| 07 | 🧪 QA & Testing | 10 | QA Engineer, SDET, Performance Tester |
-| 08 | 📣 Marketing & Content | 25 | SEO, Growth Hacker, Content Strategy, Social Media |
-| 09 | 🛒 E-commerce | 10 | Marketplace Manager, Pricing Analyst, Catalog |
-| 10 | 🤝 Sales & CS | 10 | RevOps, Customer Success, Sales Engineer, CRM |
-| 11 | 🛠️ IT Support | 13 | IT Service Manager, Help Desk, IT Auditor |
-| 12 | 📝 Consulting & Training | 13 | Enterprise Architect, Solution Architect, Tech Writer |
-| 13 | 🌟 Specialized | 18 | DPO, DevRel, AI Ethics, Accessibility, GIS |
-| 14 | 🎮 Game Development | 25 | Game Designer, Level Designer, Game AI, Multiplayer Engineer, 3D Artist |
+| 01 | Software Development | 13 | Full-Stack, Backend, Frontend, Mobile, API, Desktop |
+| 02 | Design & UX | 11 | Product Designer, UX/UI Designer, UX Researcher |
+| 03 | Data & AI | 14 | Data Scientist, ML Engineer, NLP Engineer, MLOps |
+| 04 | Cybersecurity | 15 | CISO, Security Architect, Penetration Tester, SOC |
+| 05 | Infrastructure & Ops | 15 | Cloud Engineer, DevOps, SRE, DBA, Kubernetes |
+| 06 | Management | 17 | CTO, Product Manager, Scrum Master, Agile Coach |
+| 07 | QA & Testing | 10 | QA Engineer, SDET, Performance Tester |
+| 08 | Marketing & Content | 25 | SEO, Growth Hacker, Content Strategy, Social Media |
+| 09 | E-commerce | 10 | Marketplace Manager, Pricing Analyst, Catalog |
+| 10 | Sales & CS | 10 | RevOps, Customer Success, Sales Engineer, CRM |
+| 11 | IT Support | 13 | IT Service Manager, Help Desk, IT Auditor |
+| 12 | Consulting & Training | 13 | Enterprise Architect, Solution Architect, Tech Writer |
+| 13 | Specialized | 18 | DPO, DevRel, AI Ethics, Accessibility, GIS |
+| 14 | Game Development | 25 | Game Designer, Level Designer, Game AI, Multiplayer Engineer, 3D Artist |
+
+Every role includes a **Key Skills** column with specific tools, technologies, and competencies for precise matching.
 
 ---
 
-## 💡 Examples
+## Examples
 
 ### Simple: SQL Optimization
 ```
@@ -160,6 +160,7 @@ You: "How do I optimize this SQL query that takes 30 seconds?"
 
 Dispatcher proposes:
   Agents: Database Administrator (DBA)
+  Key skills: PostgreSQL, MySQL, Oracle, MongoDB, query optimization, backup, replication
   Model: Sonnet
 
 You: "yes"
@@ -174,6 +175,7 @@ Dispatcher proposes:
   Agents: Backend Developer + Frontend Developer
   Review: Yes (2 agents)
   Model: Sonnet
+  Execution: MIXED
 
 You: "yes"
   -> Coordinated API design + React implementation with shared contracts
@@ -207,19 +209,19 @@ You: "use only DevOps Engineer with haiku"
 
 ---
 
-## 📁 File Structure
+## File Structure
 
 ```
 skill/role-dispatcher/
-  SKILL.md                          # Core dispatch logic (~100 lines)
+  SKILL.md                          # Core dispatch logic
   references/
-    role-index.md                   # Category index with English keywords
+    role-index.md                   # Category index with keywords
     prompt-templates.md             # Structured agent prompt templates
     collaboration-protocol.md       # Multi-agent coordination protocol
     model-selection-guide.md        # Model selection decision matrix
     examples.md                     # 4 complete dispatching scenarios
   assets/roles/
-    01-software-development.md      # 14 roles
+    01-software-development.md      # 13 roles
     02-design-ux.md                 # 11 roles
     03-data-ai.md                   # 14 roles
     04-cybersecurity.md             # 15 roles
@@ -232,41 +234,42 @@ skill/role-dispatcher/
     11-it-support-administration.md # 13 roles
     12-consulting-training.md       # 13 roles
     13-specialized-roles.md         # 18 roles
+    14-game-development.md          # 25 roles
 ```
 
 ---
 
-## 🤝 Contributing
+## Contributing
 
 Contributions welcome! You can:
 
-- ➕ **Add roles** — Submit a PR adding new roles to existing category files
-- 📂 **Add categories** — Create a new role file and update `references/role-index.md`
-- 📝 **Improve templates** — Enhance the agent prompt templates or collaboration protocol
-- 💡 **Add examples** — Contribute real-world dispatching scenarios to `references/examples.md`
+- **Add roles** — Submit a PR adding new roles to existing category files (include Key Skills)
+- **Add categories** — Create a new role file and update `references/role-index.md`
+- **Improve templates** — Enhance the agent prompt templates or collaboration protocol
+- **Add examples** — Contribute real-world dispatching scenarios to `references/examples.md`
 
 ---
 
-## 💖 Support the Project
+## Support the Project
 
 If you find this skill useful and want to help me build more tools like this, consider making a donation!
 
-₿ **BTC:** `bc1qyevk4km8sewy4j0xjhul8m7slprm8vj3farjph`
-[💳 Pay with Trust Wallet](https://link.trustwallet.com/send?coin=0&address=bc1qyevk4km8sewy4j0xjhul8m7slprm8vj3farjph)
+**BTC:** `bc1qyevk4km8sewy4j0xjhul8m7slprm8vj3farjph`
+[Pay with Trust Wallet](https://link.trustwallet.com/send?coin=0&address=bc1qyevk4km8sewy4j0xjhul8m7slprm8vj3farjph)
 
-⟠ **ETH:** `0xe1581e0ED99e57DBe7793E81bE35E1c81148B326`
-[💳 Pay with Trust Wallet](https://link.trustwallet.com/send?coin=60&address=0xe1581e0ED99e57DBe7793E81bE35E1c81148B326)
+**ETH:** `0xe1581e0ED99e57DBe7793E81bE35E1c81148B326`
+[Pay with Trust Wallet](https://link.trustwallet.com/send?coin=60&address=0xe1581e0ED99e57DBe7793E81bE35E1c81148B326)
 
-🔵 **ADA:** `addr1qymnqk9nf2ud469fv8zazk595qw0ccckvmq6q7pafjrwl5fhrg4v3zyw90ymp3rtrq7d9wjp3ddu9svq3mr0mvq36paq5fn4vx`
-[💳 Pay with Trust Wallet](https://link.trustwallet.com/send?coin=1815&address=addr1qymnqk9nf2ud469fv8zazk595qw0ccckvmq6q7pafjrwl5fhrg4v3zyw90ymp3rtrq7d9wjp3ddu9svq3mr0mvq36paq5fn4vx)
+**ADA:** `addr1qymnqk9nf2ud469fv8zazk595qw0ccckvmq6q7pafjrwl5fhrg4v3zyw90ymp3rtrq7d9wjp3ddu9svq3mr0mvq36paq5fn4vx`
+[Pay with Trust Wallet](https://link.trustwallet.com/send?coin=1815&address=addr1qymnqk9nf2ud469fv8zazk595qw0ccckvmq6q7pafjrwl5fhrg4v3zyw90ymp3rtrq7d9wjp3ddu9svq3mr0mvq36paq5fn4vx)
 
-🔺 **TRX:** `TAH6a2MmEYenKSBSa3fyCuBVUxUQpAH9b6`
-[💳 Pay with Trust Wallet](https://link.trustwallet.com/send?coin=195&address=TAH6a2MmEYenKSBSa3fyCuBVUxUQpAH9b6)
+**TRX:** `TAH6a2MmEYenKSBSa3fyCuBVUxUQpAH9b6`
+[Pay with Trust Wallet](https://link.trustwallet.com/send?coin=195&address=TAH6a2MmEYenKSBSa3fyCuBVUxUQpAH9b6)
 
-Every contribution helps fund development of new skills and improvements. Thank you! 🙏
+Every contribution helps fund development of new skills and improvements. Thank you!
 
 ---
 
-## 📄 License
+## License
 
 [MIT](LICENSE)

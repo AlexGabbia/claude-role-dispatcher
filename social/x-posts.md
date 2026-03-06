@@ -6,7 +6,7 @@
 ```
 I just open-sourced Role Dispatcher.
 
-It turns Claude Code, Codex CLI, and OpenCode into a team of 185+ IT specialists.
+It turns Claude Code, Codex CLI, and OpenCode into a team of 209+ IT specialists.
 
 One request. The right experts. Instant collaboration.
 
@@ -27,7 +27,7 @@ Role Dispatcher automatically identifies which experts your request needs and di
 How it works:
 
 1. You make a request (in any language)
-2. It matches against 185+ roles across 13 categories
+2. It matches against 209+ roles across 14 categories
 3. Proposes 1-3 specialist agents
 4. You confirm or adjust
 5. Agents collaborate with handoff notes
@@ -62,7 +62,7 @@ Works with Claude Code, Codex CLI, and OpenCode.
 
 MIT licensed. Contributions welcome.
 
-https://github.com/AlexGabbia/claude-role-dispatcher
+https://github.com/AlexGabbia/role-dispatcher
 
 Star it if you find it useful!
 ```
@@ -77,11 +77,11 @@ Role Dispatcher understands your requests in ANY language.
 
 Write in Italian, Japanese, Spanish — it matches internally against English keywords and responds in your language.
 
-185+ IT specialist roles. Zero translation needed.
+209+ IT specialist roles. Zero translation needed.
 
 npx @alexgabbia/role-dispatcher
 
-https://github.com/AlexGabbia/claude-role-dispatcher
+https://github.com/AlexGabbia/role-dispatcher
 ```
 
 ### Post 7 - Feature Highlight: Smart Model Selection
@@ -96,7 +96,7 @@ Role Dispatcher automatically suggests the right Claude model based on task comp
 
 You can always override.
 
-https://github.com/AlexGabbia/claude-role-dispatcher
+https://github.com/AlexGabbia/role-dispatcher
 ```
 
 ### Post 8 - Feature Highlight: Collaboration Protocol
@@ -112,7 +112,7 @@ Role Dispatcher handles it:
 
 Real team coordination, not just multiple prompts.
 
-https://github.com/AlexGabbia/claude-role-dispatcher
+https://github.com/AlexGabbia/role-dispatcher
 ```
 
 ### Post 9 - Social Proof / Use Case
@@ -125,15 +125,15 @@ I said: "use only DevOps Engineer with haiku"
 
 It adapted instantly. You're always in control.
 
-185+ IT roles at your fingertips:
-https://github.com/AlexGabbia/claude-role-dispatcher
+209+ IT roles at your fingertips:
+https://github.com/AlexGabbia/role-dispatcher
 ```
 
 ### Post 10 - Italian Community
 ```
 Ho rilasciato Role Dispatcher come open source.
 
-Trasforma Claude Code, Codex CLI e OpenCode in un team di 185+ specialisti IT.
+Trasforma Claude Code, Codex CLI e OpenCode in un team di 209+ specialisti IT.
 
 Una richiesta -> gli esperti giusti -> collaborazione istantanea.
 
@@ -141,7 +141,7 @@ Funziona in qualsiasi lingua, italiano incluso.
 
 npx @alexgabbia/role-dispatcher
 
-https://github.com/AlexGabbia/claude-role-dispatcher
+https://github.com/AlexGabbia/role-dispatcher
 ```
 
 ---
