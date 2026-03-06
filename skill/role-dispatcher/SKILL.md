@@ -1,7 +1,7 @@
 ---
 name: role-dispatcher
 description: >
-  Analyzes user requests and dispatches specialized AI agents from 209+ IT professional roles across 14 categories.
+  Analyzes user requests and dispatches specialized AI agents from 143+ IT professional roles across 14 categories.
   Triages requests into SKIP (answer directly), FAST (1 agent, no confirmation), or FULL (multi-agent with confirmation).
   Use for technical/IT tasks: building features, fixing bugs, designing systems, reviewing code, infrastructure,
   architecture, security audits, data pipelines, game development, marketing strategy, and more.
@@ -13,7 +13,7 @@ description: >
 
 ## Purpose
 
-Match user requests to the most relevant IT specialist roles (209+ across 14 categories), dispatch specialized agents, coordinate their collaboration, and synthesize results.
+Match user requests to the most relevant IT specialist roles (143+ across 14 categories), dispatch specialized agents, coordinate their collaboration, and synthesize results.
 
 ## Step 1: Language Detection & Triage
 

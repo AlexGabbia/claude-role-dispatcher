@@ -1,6 +1,6 @@
 # Role Dispatcher
 
-Skill per Claude Code, Codex CLI e OpenCode che analizza le richieste e dispatcha agenti specializzati da 209+ ruoli IT.
+Skill per Claude Code, Codex CLI e OpenCode che analizza le richieste e dispatcha agenti specializzati da 143+ ruoli IT.
 
 ## Project Structure
 
