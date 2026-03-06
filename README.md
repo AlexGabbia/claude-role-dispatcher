@@ -246,6 +246,21 @@ Contributions welcome! You can:
 
 ---
 
+## 💖 Support the Project
+
+If you find this skill useful and want to help me build more tools like this, consider making a donation!
+
+| Currency | Address |
+|----------|---------|
+| ₿ **BTC** | `bc1qyevk4km8sewy4j0xjhul8m7slprm8vj3farjph` |
+| ⟠ **ETH** | `0xe1581e0ED99e57DBe7793E81bE35E1c81148B326` |
+| 🔵 **ADA** | `addr1qymnqk9nf2ud469fv8zazk595qw0ccckvmq6q7pafjrwl5fhrg4v3zyw90ymp3rtrq7d9wjp3ddu9svq3mr0mvq36paq5fn4vx` |
+| 🔺 **TRX** | `TAH6a2MmEYenKSBSa3fyCuBVUxUQpAH9b6` |
+
+Every contribution helps fund development of new skills and improvements. Thank you! 🙏
+
+---
+
 ## 📄 License
 
 [MIT](LICENSE)
