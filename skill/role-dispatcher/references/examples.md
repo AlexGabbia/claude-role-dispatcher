@@ -144,3 +144,108 @@ Proceed? You can:
 **User**: "use only DevOps Engineer with haiku"
 
 -> Dispatcher adjusts: 1 agent (DevOps Engineer), model changed to Haiku, no review agent needed.
+
+---
+
+## Example 5: Large-Scale Project (Agent Team)
+
+**User request**: "Build a complete SaaS project management tool with user auth, team workspaces, real-time collaboration, Stripe billing, email notifications, and an admin dashboard"
+
+### Dispatch Decision
+- **Categories**: Software Development + Design & UX + Infrastructure & Ops + Cybersecurity + E-commerce
+- **Roles**: Software Architect, Backend Developer, Frontend Developer, UX/UI Designer, DevOps Engineer, Security Engineer, Payment Integration Specialist
+- **Independence**: Highly interdependent — architecture drives all layers, security cross-cuts everything
+- **Agents**: 7 (Agent Team mode — too many agents for subagent coordination, deep collaboration needed)
+- **Model**: Opus (large-scale architecture + multi-agent coordination)
+
+### Propose & Confirm
+
+```
+**Proposed dispatch:**
+- Software Architect: system architecture, service boundaries, data models
+  Key skills: system design, microservices, event-driven architecture
+- Backend Developer: API design, auth, real-time WebSocket layer
+  Key skills: Node.js, Python, REST, GraphQL, WebSockets
+- Frontend Developer: React app, real-time UI, responsive design
+  Key skills: React, TypeScript, state management, WebSocket clients
+- UX/UI Designer: user flows, wireframes, design system
+  Key skills: Figma, design systems, user research, accessibility
+- DevOps Engineer: CI/CD, cloud infrastructure, monitoring
+  Key skills: Docker, Kubernetes, Terraform, GitHub Actions
+- Security Engineer: auth architecture, data protection, compliance
+  Key skills: OAuth, RBAC, encryption, OWASP, GDPR
+- Payment Integration Specialist: Stripe billing, subscription management
+  Key skills: Stripe API, recurring billing, webhook handling
+
+**Model:** claude-opus-4-6 (high complexity)
+**Execution:** MIXED (architecture first, then parallel implementation)
+**Dispatch mode:** Agent Team — 7 agents with cross-cutting dependencies need shared coordination
+
+Proceed? You can:
+- **yes** to proceed as proposed
+- **Change roles**: e.g. "remove UX/UI Designer"
+- **Change model**: e.g. "use sonnet"
+- **use subagents**: force subagent mode instead of team
+- **Combine**: e.g. "remove Payment Specialist, use sonnet"
+```
+
+**User**: "yes"
+-> Dispatcher creates team via TeamCreate, spawns Software Architect as Team Lead, then 6 teammates.
+
+### Team Execution
+1. **Team Lead (Software Architect)** creates tasks: "Define service boundaries", "Design data models", "API contract spec", "Auth architecture", "Deployment strategy", "UI component inventory", "Billing integration spec"
+2. Teammates claim tasks matching their expertise
+3. Security Engineer broadcasts: "All services must use JWT with refresh tokens, RBAC on every endpoint"
+4. Frontend Developer messages Backend Developer: "Need WebSocket event schema for real-time updates"
+5. Team Lead monitors progress, resolves conflicts (e.g., REST vs GraphQL debate)
+6. Team Lead synthesizes all deliverables into a unified architecture document
+
+---
+
+## Example 6: Competing Hypotheses / Debugging (Agent Team)
+
+**User request**: "Our API response times jumped from 50ms to 2s after yesterday's deploy. We changed the ORM, added a new caching layer, and updated the load balancer config. Need to find the root cause."
+
+### Dispatch Decision
+- **Categories**: Infrastructure & Ops + Software Development + QA & Testing
+- **Roles**: Database Administrator, Backend Developer, Performance Tester, SRE, DevOps Engineer
+- **Independence**: INDEPENDENT investigation, but agents need to **challenge each other's hypotheses**
+- **Agents**: 5 (Agent Team mode — competing hypotheses require discussion between agents)
+- **Model**: Opus (complex debugging + multi-agent debate)
+
+### Propose & Confirm
+
+```
+**Proposed dispatch:**
+- Database Administrator: ORM migration analysis, query plan regression
+  Key skills: query optimization, ORM tuning, execution plans
+- Backend Developer: ORM code review, N+1 queries, connection pooling
+  Key skills: ORM patterns, connection management, profiling
+- Performance Tester: load testing, response time profiling, bottleneck isolation
+  Key skills: JMeter, profiling, latency analysis, benchmarking
+- Site Reliability Engineer: load balancer config review, traffic patterns
+  Key skills: load balancing, traffic analysis, monitoring, alerting
+- DevOps Engineer: deployment diff analysis, infrastructure changes
+  Key skills: deploy pipelines, config management, rollback procedures
+
+**Model:** claude-opus-4-6 (high complexity)
+**Execution:** INDEPENDENT (parallel investigation)
+**Dispatch mode:** Agent Team — competing hypotheses need cross-agent discussion
+
+Proceed? You can:
+- **yes** to proceed as proposed
+- **Change roles**: e.g. "add Security Engineer"
+- **Change model**: e.g. "use sonnet"
+- **use subagents**: force subagent mode instead of team
+```
+
+**User**: "yes"
+-> Dispatcher creates team, spawns DBA as Team Lead (database is primary suspect), then 4 teammates.
+
+### Team Execution
+1. Each agent investigates their hypothesis in parallel
+2. DBA broadcasts: "ORM is generating 3 extra JOINs per query — likely culprit"
+3. Backend Developer responds: "Confirmed N+1 pattern in the new ORM mapping, but connection pool is also misconfigured"
+4. SRE messages: "Load balancer change is clean — no impact on latency"
+5. Performance Tester: "Profiling confirms 80% of latency is in DB layer, 20% in connection pool exhaustion"
+6. Team Lead synthesizes: root cause is ORM migration (N+1 + extra JOINs) compounded by connection pool misconfiguration. Proposes fix with rollback strategy.

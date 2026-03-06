@@ -21,7 +21,7 @@ Skill per Claude Code, Codex CLI e OpenCode che analizza le richieste e dispatch
 - I file dei ruoli in `assets/roles/` hanno header solo in inglese (es. `# Software Development`)
 - Le descrizioni dei ruoli dentro i file sono in inglese
 - Il dispatcher risponde nella lingua dell'utente, ma il matching interno usa keyword inglesi
-- Massimo 3 agenti per richiesta
+- Il numero di agenti scala con la complessità del task (nessun limite artificiale)
 - I path nei file sono relativi alla directory della skill
 
 ## Publishing
@@ -40,4 +40,4 @@ Skill per Claude Code, Codex CLI e OpenCode che analizza le richieste e dispatch
 | `references/collaboration-protocol.md` | Protocollo coordinamento multi-agente |
 | `references/model-selection-guide.md` | Matrice selezione modello (Haiku/Sonnet/Opus) |
 | `references/prompt-templates.md` | Template prompt strutturati per gli agenti |
-| `references/examples.md` | 4 scenari completi di dispatching |
+| `references/examples.md` | 6 scenari completi di dispatching |

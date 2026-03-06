@@ -10,7 +10,8 @@
 | Multi-file feature | 2 | Yes | `claude-sonnet-4-6` | Multiple concerns, needs coordination |
 | Architecture / system design | 2-3 | Yes | `claude-opus-4-6` | Deep reasoning, complex trade-offs |
 | Security audit / review | 1-2 | Yes | `claude-opus-4-6` | Critical accuracy, no room for error |
-| Multi-agent coordination | 3 | Yes | `claude-opus-4-6` | Complex orchestration, synthesis |
+| Multi-agent coordination (subagents) | 3-4 | Yes | `claude-opus-4-6` | Complex orchestration, synthesis |
+| Agent Team coordination | 5+ | Yes (Team Lead) | `claude-opus-4-6` | Large-scale orchestration, team self-coordination |
 
 ## Quick Decision Flow
 
@@ -19,7 +20,7 @@ Is it a simple question or small edit?
   YES -> Haiku
   NO  -> Does it require multi-file changes or 2+ agents?
     NO  -> Sonnet
-    YES -> Is it architecture, security, or 3-agent coordination?
+    YES -> Is it architecture, security, 3+ agent coordination, or Agent Team?
       NO  -> Sonnet
       YES -> Opus
 ```
@@ -34,8 +35,9 @@ Is it a simple question or small edit?
 
 ## Override Rules
 
-- **Always use Opus** for: security-sensitive tasks, system architecture, tasks touching production infrastructure
-- **Never use Haiku** for: multi-file code changes, security analysis, architecture decisions
+- **Always use Opus** for: security-sensitive tasks, system architecture, tasks touching production infrastructure, Agent Team coordination
+- **Never use Haiku** for: multi-file code changes, security analysis, architecture decisions, Agent Team mode
+- **Agent Teams note**: The Team Lead should always use Opus. Individual teammates can use Sonnet for focused implementation tasks if the user requests a lighter model — the Team Lead still coordinates on Opus
 - **User override**: If the user explicitly requests a model, respect their choice regardless of this guide
 
 ## User Override Protocol

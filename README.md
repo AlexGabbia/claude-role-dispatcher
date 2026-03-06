@@ -28,7 +28,7 @@ Instead of a one-size-fits-all response, you get answers from the **actual profe
 | | Without Role Dispatcher | With Role Dispatcher |
 |---|---|---|
 | **Expertise** | Generic AI response | Specialist-grade from 209+ roles |
-| **Multi-domain tasks** | You manage context yourself | Auto-dispatches 1-3 agents that collaborate |
+| **Multi-domain tasks** | You manage context yourself | Auto-dispatches the right number of agents that collaborate |
 | **Quality control** | Hope for the best | Confidence scoring + Review Agent validation |
 | **Model selection** | One size fits all | Right model (Haiku/Sonnet/Opus) per task complexity |
 | **Your control** | Take what you get | Propose & Confirm — change roles or model before dispatch |
@@ -121,9 +121,9 @@ Proceed? You can:
 
 1. **Analyze** — Detects your language, scans request against keyword index + semantic inference
 2. **Match** — Identifies relevant categories from the 14 available
-3. **Select** — Picks 1-3 specialist roles using Key Skills matching, determines optimal model
-4. **Propose & Confirm** — Shows proposed roles (with key skills) and model, waits for your approval or changes
-5. **Dispatch** — Launches agents with structured prompts including expertise profiles and behavioral guidelines
+3. **Select** — Picks N specialist roles using Key Skills matching, determines optimal model and dispatch mode
+4. **Propose & Confirm** — Shows proposed roles (with key skills), model, and dispatch mode, waits for your approval or changes
+5. **Dispatch** — Launches agents via subagents (1-4) or Agent Teams (5+) with structured prompts
 6. **Review** — (2+ agents) Validates completeness, detects conflicts, verifies integration
 7. **Synthesize** — Merges outputs into a single coherent answer with aggregate confidence
 
@@ -195,6 +195,22 @@ You: "yes"
   -> Architecture -> Implementation plan -> Deployment strategy
 ```
 
+### Large-Scale: SaaS Platform (Agent Team)
+```
+You: "Build a complete SaaS project management tool with auth, real-time
+     collaboration, Stripe billing, and admin dashboard"
+
+Dispatcher proposes:
+  Agents: Software Architect + Backend Dev + Frontend Dev + UX/UI Designer
+          + DevOps Engineer + Security Engineer + Payment Specialist
+  Dispatch mode: Agent Team (7 agents, deep collaboration)
+  Model: Opus
+
+You: "yes"
+  -> Creates team, Software Architect leads, teammates self-coordinate
+  -> Delivers unified architecture + implementation plan
+```
+
 ### User Override
 ```
 You: "Set up a CI/CD pipeline for our Node.js monorepo"
@@ -209,6 +225,38 @@ You: "use only DevOps Engineer with haiku"
 
 ---
 
+## Agent Teams (Experimental)
+
+For large-scale tasks (5+ agents) or when agents need to discuss and challenge each other, the dispatcher uses **Agent Teams** — a Claude Code experimental feature that enables real inter-agent collaboration.
+
+### How it differs from subagents
+
+| | Subagents | Agent Teams |
+|---|---|---|
+| **Communication** | Through dispatcher only | Direct messaging between teammates |
+| **Coordination** | Dispatcher orchestrates | Team self-coordinates via shared task list |
+| **Best for** | 1-4 focused, independent agents | 5+ agents or deep collaboration needs |
+| **Overhead** | Low | Higher, but enables richer collaboration |
+
+### Enable Agent Teams
+
+Add to your `.claude/settings.json`:
+```json
+{
+  "env": {
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1"
+  }
+}
+```
+
+### Override dispatch mode
+
+During the Propose & Confirm step, you can force a specific mode:
+- **"use team"** — Forces Agent Team mode even for 2-4 agents
+- **"use subagents"** — Forces subagent mode even for 5+ agents
+
+---
+
 ## File Structure
 
 ```
@@ -219,7 +267,7 @@ skill/role-dispatcher/
     prompt-templates.md             # Structured agent prompt templates
     collaboration-protocol.md       # Multi-agent coordination protocol
     model-selection-guide.md        # Model selection decision matrix
-    examples.md                     # 4 complete dispatching scenarios
+    examples.md                     # 6 complete dispatching scenarios
   assets/roles/
     01-software-development.md      # 13 roles
     02-design-ux.md                 # 11 roles

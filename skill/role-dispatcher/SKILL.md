@@ -48,20 +48,36 @@ Within the matched category files, select the best role(s) by comparing the requ
 | Complexity | Agents | Review Agent | Signal |
 |------------|--------|-------------|--------|
 | Single domain, clear deliverable | 1 | No | "Write a React component", "Optimize this query" |
-| Two domains with integration points | 2 | Yes | "Build API + frontend", "Design and deploy" |
-| Multi-domain, architectural scope | 3 | Yes | "Design a secure e-commerce platform" |
+| Two domains with integration points | 2-3 | Yes | "Build API + frontend", "Design and deploy" |
+| Multi-domain, architectural scope | 3-5 | Yes | "Design a secure e-commerce platform" |
+| Large-scale project, cross-layer work | 5-10+ | Yes (or Team Lead) | "Build a complete SaaS platform", "Full security audit of microservices" |
 
-**Max 3 agents.** If more domains are involved, group related competencies into a composite role (e.g., "Full-Stack Developer" covers both frontend and backend rather than dispatching two separate agents).
+**Scale agents to actual complexity.** Match the number of agents to the number of genuinely distinct roles needed. Don't inflate for the sake of it, don't compress when more specialists would help. If a single "Full-Stack Developer" genuinely covers the request, use one agent. If a project spans frontend, backend, database, security, DevOps, and design — use six.
 
 **Role selection heuristic**: Pick the most specialized role that covers the request. "Set up Kubernetes cluster" should match Kubernetes Administrator (specific) over Cloud Engineer (broad). Use the Key Skills column to break ties between similar roles.
 
-## Step 4: Classify Dependencies
+## Step 4: Classify Dependencies & Select Dispatch Mode
 
-Read `references/collaboration-protocol.md` for the full protocol. Quick reference:
+Read `references/collaboration-protocol.md` for the full protocol.
+
+### Dependency Classification
 
 - **INDEPENDENT**: No data flow between agents -> run in **parallel**
 - **DEPENDENT**: Output of one feeds another -> run **sequentially**, pass handoff notes
 - **MIXED**: Parallel first, then sequential for dependent parts
+
+### Dispatch Mode Selection
+
+| Agents | Collaboration needed? | Mode | Why |
+|--------|----------------------|------|-----|
+| 1 | N/A | **Single subagent** | Simple, focused task |
+| 2-4, independent | No | **Parallel subagents** | Fast, low overhead |
+| 2-4, dependent | Minimal (handoff notes) | **Sequential subagents** | One feeds the next, dispatcher coordinates |
+| 5+ OR agents need to discuss/challenge each other | Yes | **Agent Team** (TeamCreate) | Shared tasks, direct messaging, self-coordination |
+
+**User override**: "use a team" forces Agent Team mode even for 2 agents. "use subagents" forces subagent mode even for 5+.
+
+**Note**: Agent Teams require the experimental flag `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` in `.claude/settings.json`.
 
 ## Step 5: Select Model
 
@@ -86,19 +102,25 @@ Present the dispatch plan and **wait for user confirmation** before proceeding. 
 
 **Model:** {model} ({complexity} complexity)
 **Execution:** {INDEPENDENT | DEPENDENT | MIXED}
+**Dispatch mode:** {Subagents | Agent Team} — {reason}
 
 Proceed? You can:
 - **yes** to proceed as proposed
 - **Change roles**: e.g. "use Security Engineer instead of Backend Developer"
 - **Change model**: e.g. "use opus" or "use haiku"
-- **Both**: e.g. "use only Frontend Developer with sonnet"
+- **use team** / **use subagents**: override the dispatch mode
+- **Combine**: e.g. "use only Frontend Developer with sonnet"
 ```
 
-If the user modifies roles or model, adjust and proceed. If they confirm, proceed with the original proposal.
+If the user modifies roles, model, or dispatch mode, adjust and proceed. If they confirm, proceed with the original proposal.
 
 ## Step 7: Dispatch Agents
 
-Read `references/prompt-templates.md` for the full template. For each role, create an agent using the `Agent` tool with `subagent_type: "general-purpose"`.
+Read `references/prompt-templates.md` for the full template.
+
+### Path A: Subagent Dispatch (default for 1-4 agents)
+
+For each role, create an agent using the `Agent` tool with `subagent_type: "general-purpose"`.
 
 Each agent prompt MUST include:
 1. **Role identity**: Name, description, and key skills from the role file
@@ -110,16 +132,36 @@ Each agent prompt MUST include:
 
 **Parallel dispatch**: Launch all INDEPENDENT agents in a single message with multiple Agent tool calls. For DEPENDENT agents, wait for each to complete before dispatching the next with handoff notes.
 
+### Path B: Agent Team Dispatch (for 5+ agents or when deep collaboration is needed)
+
+Use the `TeamCreate` tool to create a team, then spawn teammates via the `Agent` tool with `team_name`.
+
+1. **Create the team**: `TeamCreate` with a descriptive team name and the overall goal
+2. **Spawn teammates**: For each role, use `Agent` tool with `team_name` set to the created team. Use the **Teammate Template** from `references/prompt-templates.md`
+3. **Team Lead**: The first agent spawned acts as Team Lead. Use the **Team Lead Template**. The Team Lead:
+   - Creates shared tasks via the task list for the team to work on
+   - Coordinates work assignment among teammates
+   - Acts as the Review Agent (synthesizes final output)
+   - Sends direct messages to teammates when needed
+4. **Self-coordination**: Teammates claim tasks, communicate via messaging, and deliver their parts. The dispatcher does NOT need to manually orchestrate — the team self-coordinates
+5. **Completion**: The Team Lead synthesizes all contributions and delivers the final result
+
 ## Step 8: Review & Synthesize
 
 **Single agent**: Present the result directly. If confidence is LOW, flag it to the user.
 
-**Multi-agent**: Apply the Review Agent protocol from `references/collaboration-protocol.md`:
+**Multi-agent (Subagent mode)**: Apply the Review Agent protocol from `references/collaboration-protocol.md`:
 1. Check completeness against the original request
 2. Detect conflicts between agent outputs
 3. Verify integration (pieces fit together)
 4. Compute aggregate confidence = minimum of individual confidences
 5. Decision: APPROVE / NEEDS_REVISION / ESCALATE
+
+**Multi-agent (Agent Team mode)**: The Team Lead acts as Review Agent:
+1. Collects all teammate contributions via the shared task list
+2. Applies the same review protocol (completeness, conflicts, integration, confidence)
+3. Synthesizes the final response
+4. The dispatcher presents the Team Lead's synthesis to the user
 
 If **ESCALATE**: Present conflicting perspectives with pros/cons. Let the user decide.
 If **APPROVE**: Synthesize into a single coherent response in `{RESPONSE_LANGUAGE}`.
@@ -127,11 +169,13 @@ If **APPROVE**: Synthesize into a single coherent response in `{RESPONSE_LANGUAG
 ## Rules
 
 - Respond in the user's detected language
-- Max 3 agents per request
+- Scale agent count to match task complexity — no artificial limit
 - All file paths are relative to this skill directory (use `assets/roles/` and `references/`)
 - For detailed examples, read `references/examples.md`
-- Use `Agent` tool with `subagent_type: "general-purpose"` for each agent
+- **Subagent mode**: Use `Agent` tool with `subagent_type: "general-purpose"` for each agent
+- **Agent Team mode**: Use `TeamCreate` then `Agent` with `team_name` — requires experimental flag `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`
 - Agents run in parallel when INDEPENDENT, sequentially when DEPENDENT
 - LOW confidence from any agent triggers automatic ESCALATE
 - Always wait for user confirmation in Step 6 before dispatching agents
 - Prefer the most specialized role over a generalist one when both could apply
+- User can override dispatch mode with "use team" or "use subagents"
