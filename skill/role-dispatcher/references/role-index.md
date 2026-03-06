@@ -19,4 +19,33 @@ Quick-reference index for matching user requests to role categories.
 | 13 | `13-specialized-roles.md` | Specialized | digital transformation, DPO, data protection, accessibility, WCAG, open source, DevRel, localization, i18n, l10n, translation, ethics, AI ethics, GIS, geospatial, RPA, robotic process automation, green IT, sustainability, quantum computing | 18 |
 | 14 | `14-game-development.md` | Game Development | game, videogame, video game, game design, level design, Unity, Unreal, Godot, game AI, multiplayer, netcode, 3D modeling, sprites, pixel art, VFX, shader, game engine, NPC, physics, ragdoll, HUD, gamedev, indie game, AAA, game jam, Steam, console, mobile game, RPG, platformer, FPS, MMO, battle royale | 25 |
 
+## Intent Patterns
+
+Natural-language patterns that map to categories when keyword matching fails. Use these in Pass 1.5 (before semantic inference).
+
+| Intent Pattern | Maps To | Primary Role |
+|---------------|---------|-------------|
+| "my site/app is slow", "page takes long to load" | Infrastructure & Ops | Performance Engineer / SRE |
+| "it doesn't work", "something broke", "getting an error" | Software Development | Full-Stack Developer (then narrow by context) |
+| "login doesn't work", "can't authenticate", "session expired" | Cybersecurity | Identity & Access Engineer |
+| "make it look better", "the UI is ugly", "redesign" | Design & UX | UX/UI Designer |
+| "how do I deploy", "put it online", "go live" | Infrastructure & Ops | DevOps Engineer |
+| "we need more users", "grow our audience", "get more traffic" | Marketing & Content | Growth Hacker / SEO Specialist |
+| "customers are leaving", "churn is high", "retention" | Sales & CS | Customer Success Manager |
+| "it's not secure", "we got hacked", "data breach" | Cybersecurity | Incident Response Analyst |
+| "need a database", "store the data", "data model" | Infrastructure & Ops | Database Administrator |
+| "write tests", "it keeps breaking", "quality" | QA & Testing | Test Automation Engineer |
+| "make it accessible", "screen reader", "WCAG" | Specialized | Accessibility Specialist |
+| "sell online", "add payments", "shopping cart" | E-commerce | E-commerce Platform Specialist |
+| "train the team", "documentation", "onboarding guide" | Consulting & Training | Technical Writer / Trainer |
+| "manage the project", "we're behind schedule", "sprint planning" | Management | Scrum Master / Project Manager |
+| "analyze the data", "dashboard", "metrics", "KPIs" | Data & AI | Data Analyst / BI Specialist |
+| "build a game", "game mechanics", "level design" | Game Development | Game Designer |
+| "automate this", "repetitive task", "workflow" | Specialized | RPA Developer |
+| "AI feature", "chatbot", "recommendation engine" | Data & AI | ML Engineer / NLP Specialist |
+| "mobile app", "iOS/Android", "app store" | Software Development | Mobile Developer |
+| "API integration", "connect to", "webhook" | Software Development | API Developer |
+
+**Usage**: When a user request doesn't match any keyword in the main index, scan this table for semantic similarity. The "Maps To" column identifies the category file to read; the "Primary Role" gives a starting point (refine by reading the full role file).
+
 **Total: 209 roles across 14 categories**

@@ -147,3 +147,39 @@ Automatically escalate to user when:
 - Agents produce contradicting recommendations
 - The task requires domain knowledge not covered by available roles
 - The estimated complexity exceeds what agents can handle autonomously
+
+## 9. Fallback Protocol
+
+### Agent Teams Unavailable
+
+When Agent Team mode is selected but the experimental flag `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` is not active, degrade gracefully:
+
+1. **Notify the user**: "Agent Teams not available — using coordinated subagents instead."
+2. **Convert Team Lead to coordinator**: The role designated as Team Lead becomes the first sequential agent and produces a coordination plan
+3. **Convert teammates to sequential subagents**: Each teammate runs sequentially with enhanced handoff notes that simulate team communication
+4. **Enhanced handoff notes format**:
+
+```
+### Coordination Context (simulating team mode)
+- **Project goal**: {ORIGINAL_GOAL}
+- **Your role in sequence**: Agent {N} of {TOTAL}
+- **Previous agents completed**: {LIST_WITH_SUMMARIES}
+- **Decisions made so far**: {KEY_DECISIONS}
+- **Your focus area**: {FOCUS}
+- **Remaining agents after you**: {LIST_WITH_ROLES}
+- **Cross-cutting constraints**: {CONSTRAINTS_FROM_PREVIOUS_AGENTS}
+```
+
+5. **Review**: The last agent in sequence acts as Review Agent, synthesizing all outputs
+
+### Degradation Trade-offs
+
+| Aspect | Agent Team | Fallback (Sequential Subagents) |
+|--------|------------|-------------------------------|
+| Parallelism | Full parallel | Sequential only |
+| Communication | Direct messaging | Handoff notes only |
+| Conflict resolution | Real-time debate | Post-hoc review |
+| Self-coordination | Yes | No (dispatcher orchestrates) |
+| Quality | Higher for complex projects | Adequate for most cases |
+
+The fallback preserves the **multi-specialist perspective** (each agent still has its role identity and expertise framing) while losing real-time collaboration. For most tasks, this produces results close to full Agent Team mode.

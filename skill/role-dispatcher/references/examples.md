@@ -1,8 +1,42 @@
 # Dispatching Examples
 
-## Example 1: Simple (Single Agent)
+## Example 1: SKIP (No Dispatch)
+
+**User request**: "What does useEffect do in React?"
+
+### Triage Decision
+- **Lane**: SKIP
+- **Reason**: Simple factual question, no implementation, no code involved
+- **Action**: Answer directly as generalist. No agents dispatched.
+
+-> Dispatcher answers the question directly without any role matching or agent dispatch.
+
+---
+
+## Example 2: FAST (Single Agent, No Confirmation)
+
+**User request**: "Fix this TypeScript error: Property 'name' does not exist on type '{}'."
+
+### Triage Decision
+- **Lane**: FAST
+- **Reason**: Single domain (Software Development), 1 obvious role (Frontend/Full-Stack Developer), low complexity
+
+### Dispatch Decision
+- **Category match**: Software Development (keyword: TypeScript)
+- **Role**: Frontend Developer
+- **Agents**: 1
+- **Model**: Sonnet (debugging, focused scope)
+
+-> Dispatcher skips confirmation (Step 6) and immediately dispatches a Frontend Developer agent on Sonnet.
+
+---
+
+## Example 3: Simple with Confirmation (Single Agent, FULL)
 
 **User request**: "How do I optimize this SQL query that's taking 30 seconds?"
+
+### Triage Decision
+- **Lane**: FULL (could be FAST, but query optimization may involve architecture discussion — defaults to FULL for ambiguous scope)
 
 ### Dispatch Decision
 - **Category match**: Infrastructure & Ops (keyword: database)
@@ -31,7 +65,7 @@ Proceed? You can:
 
 ---
 
-## Example 2: Medium (Two Agents)
+## Example 4: Medium (Two Agents)
 
 **User request**: "I need to build a REST API with authentication and a React dashboard to manage users"
 
@@ -69,7 +103,7 @@ Proceed? You can:
 
 ---
 
-## Example 3: Complex (Three Agents)
+## Example 5: Complex (Three Agents)
 
 **User request**: "Design a microservices architecture for our e-commerce platform with payment processing, inventory management, and real-time notifications"
 
@@ -114,7 +148,7 @@ Proceed? You can:
 
 ---
 
-## Example 4: User Override (Role + Model Change)
+## Example 6: User Override (Role + Model Change)
 
 **User request**: "Set up a CI/CD pipeline for our Node.js monorepo with staging and production environments"
 
@@ -147,7 +181,7 @@ Proceed? You can:
 
 ---
 
-## Example 5: Large-Scale Project (Agent Team)
+## Example 7: Large-Scale Project (Agent Team)
 
 **User request**: "Build a complete SaaS project management tool with user auth, team workspaces, real-time collaboration, Stripe billing, email notifications, and an admin dashboard"
 
@@ -202,7 +236,7 @@ Proceed? You can:
 
 ---
 
-## Example 6: Competing Hypotheses / Debugging (Agent Team)
+## Example 8: Competing Hypotheses / Debugging (Agent Team)
 
 **User request**: "Our API response times jumped from 50ms to 2s after yesterday's deploy. We changed the ORM, added a new caching layer, and updated the load balancer config. Need to find the root cause."
 

@@ -2,10 +2,10 @@
 name: role-dispatcher
 description: >
   Analyzes user requests and dispatches specialized AI agents from 209+ IT professional roles across 14 categories.
-  Use this skill for ANY technical or IT-related task: building features, fixing bugs, designing systems,
-  reviewing code, setting up infrastructure, planning architecture, security audits, data pipelines, game development,
-  marketing strategy, and more. Even simple requests like "fix this bug" or "create a landing page" benefit from
-  specialist matching. Triggers on: build, create, develop, design, deploy, debug, fix, optimize, architect, secure,
+  Triages requests into SKIP (answer directly), FAST (1 agent, no confirmation), or FULL (multi-agent with confirmation).
+  Use for technical/IT tasks: building features, fixing bugs, designing systems, reviewing code, infrastructure,
+  architecture, security audits, data pipelines, game development, marketing strategy, and more.
+  Triggers on: build, create, develop, design, deploy, debug, fix, optimize, architect, secure,
   test, analyze, migrate, automate, review, audit, plan, manage, refactor, scale, monitor, integrate, configure, implement.
 ---
 
@@ -15,16 +15,24 @@ description: >
 
 Match user requests to the most relevant IT specialist roles (209+ across 14 categories), dispatch specialized agents, coordinate their collaboration, and synthesize results.
 
-## Step 1: Language Detection & Gate Check
+## Step 1: Language Detection & Triage
 
 **Language**: Detect the user's language. Set `RESPONSE_LANGUAGE` for all outputs. Internal matching always uses English keywords regardless of input language.
 
-**Gate check** — Skip dispatch if ALL of these are true:
-- The request is a simple factual question with no implementation component
-- No code, architecture, or technical workflow is involved
-- A general-purpose response would fully satisfy the request
+**Triage** — Classify the request into one of three lanes:
 
-If in doubt, proceed with dispatch — a specialist perspective adds value even for seemingly simple questions. "How do I center a div?" is better answered by a Frontend Developer than a generalist.
+| Lane | Criteria | Action |
+|------|----------|--------|
+| **SKIP** | Simple factual question, no implementation, no code/architecture involved | Answer directly as generalist. Do NOT dispatch. |
+| **FAST** | Single domain clearly identified, 1 obvious role match, low-medium complexity | Skip confirmation (Step 6). Dispatch 1 agent directly. |
+| **FULL** | Multi-domain, ambiguous match, high complexity, or 2+ agents needed | Full flow with confirmation at Step 6. |
+
+**Decision examples:**
+- SKIP: "What does useEffect do?", "Explain REST vs GraphQL", "What's a mutex?"
+- FAST: "Fix this TypeScript error", "Write a Python function that...", "Optimize this SQL query"
+- FULL: "Build an API with auth and a React dashboard", "Design a microservices architecture", "Security audit of our platform"
+
+**Default to FAST over FULL when in doubt. Default to FAST over SKIP when the request involves any code or file.**
 
 ## Step 2: Analyze Request & Match Categories
 
@@ -32,7 +40,9 @@ Read `references/role-index.md` to identify 1-3 matching categories using this t
 
 **Pass 1 — Keyword scan**: Match the request against category keywords. Most requests match clearly here.
 
-**Pass 2 — Semantic inference** (if Pass 1 is ambiguous or yields 0 matches): Consider the intent behind the request, not just literal words. Example: "make my app faster" has no direct keyword, but maps to Infrastructure & Ops (performance) or QA & Testing (performance testing) depending on context.
+**Pass 1.5 — Intent pattern matching** (if Pass 1 yields 0 matches): Check the intent patterns table in `references/role-index.md` before falling back to semantic inference. Intent patterns catch common natural-language requests that don't contain technical keywords.
+
+**Pass 2 — Semantic inference** (if Pass 1 and Pass 1.5 are ambiguous or yield 0 matches): Consider the intent behind the request, not just literal words. Example: "make my app faster" has no direct keyword, but maps to Infrastructure & Ops (performance) or QA & Testing (performance testing) depending on context.
 
 **Edge cases:**
 - **No match found**: Tell the user no specialist role fits well, then answer directly as a generalist
@@ -75,6 +85,8 @@ Read `references/collaboration-protocol.md` for the full protocol.
 | 2-4, dependent | Minimal (handoff notes) | **Sequential subagents** | One feeds the next, dispatcher coordinates |
 | 5+ OR agents need to discuss/challenge each other | Yes | **Agent Team** (TeamCreate) | Shared tasks, direct messaging, self-coordination |
 
+**Agent Teams fallback**: If Agent Team mode is selected but the experimental flag `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` is not active, automatically degrade to sequential subagents with enhanced handoff notes. Notify the user: "Agent Teams not available — using coordinated subagents instead." See `references/collaboration-protocol.md` § Fallback Protocol for details.
+
 **User override**: "use a team" forces Agent Team mode even for 2 agents. "use subagents" forces subagent mode even for 5+.
 
 **Note**: Agent Teams require the experimental flag `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` in `.claude/settings.json`.
@@ -91,7 +103,9 @@ Read `references/model-selection-guide.md` for the full matrix. Quick reference:
 
 ## Step 6: Propose & Confirm
 
-Present the dispatch plan and **wait for user confirmation** before proceeding. This step is mandatory — never skip it.
+**Fast-path tasks skip this step.** If triage (Step 1) classified the request as FAST, proceed directly to Step 7 with the single matched agent. No confirmation needed.
+
+Present the dispatch plan and **wait for user confirmation** before proceeding. This step is mandatory for FULL tasks — never skip it.
 
 ```
 **Proposed dispatch:**
@@ -176,6 +190,8 @@ If **APPROVE**: Synthesize into a single coherent response in `{RESPONSE_LANGUAG
 - **Agent Team mode**: Use `TeamCreate` then `Agent` with `team_name` — requires experimental flag `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`
 - Agents run in parallel when INDEPENDENT, sequentially when DEPENDENT
 - LOW confidence from any agent triggers automatic ESCALATE
-- Always wait for user confirmation in Step 6 before dispatching agents
+- Always wait for user confirmation in Step 6 before dispatching agents (FULL tasks only; FAST tasks skip confirmation)
 - Prefer the most specialized role over a generalist one when both could apply
 - User can override dispatch mode with "use team" or "use subagents"
+- The value of role dispatch is **structured prompt framing**: forcing specialist perspective, focused scope, and domain-specific vocabulary. It does not grant capabilities the model lacks — it activates relevant knowledge more effectively
+- FAST-path tasks skip Step 6 (confirmation). SKIP tasks bypass dispatch entirely
