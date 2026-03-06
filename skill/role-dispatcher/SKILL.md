@@ -34,6 +34,8 @@ Match user requests to the most relevant IT specialist roles (209+ across 14 cat
 
 **Default to FAST over FULL when in doubt. Default to FAST over SKIP when the request involves any code or file.**
 
+**Context persistence**: For FULL tasks with medium-high complexity (3+ agents or estimated 30+ tool calls per agent), enable context persistence (PERSIST=YES). Read `references/context-persistence-protocol.md`. For FAST/SKIP tasks, PERSIST=NO.
+
 ## Step 2: Analyze Request & Match Categories
 
 Read `references/role-index.md` to identify 1-3 matching categories using this two-pass approach:
@@ -146,6 +148,8 @@ Each agent prompt MUST include:
 
 **Parallel dispatch**: Launch all INDEPENDENT agents in a single message with multiple Agent tool calls. For DEPENDENT agents, wait for each to complete before dispatching the next with handoff notes.
 
+**Context persistence** (if PERSIST=YES): Before dispatching, create `.dispatch/STATE.md` with the project goal, agent roster, and dispatch mode. Add context persistence instructions to each agent's prompt (see `references/prompt-templates.md` - Context Persistence Section). Agents will self-checkpoint and signal if they need continuation.
+
 ### Path B: Agent Team Dispatch (for 5+ agents or when deep collaboration is needed)
 
 Use the `TeamCreate` tool to create a team, then spawn teammates via the `Agent` tool with `team_name`.
@@ -159,6 +163,21 @@ Use the `TeamCreate` tool to create a team, then spawn teammates via the `Agent`
    - Sends direct messages to teammates when needed
 4. **Self-coordination**: Teammates claim tasks, communicate via messaging, and deliver their parts. The dispatcher does NOT need to manually orchestrate — the team self-coordinates
 5. **Completion**: The Team Lead synthesizes all contributions and delivers the final result
+
+**Context persistence** (if PERSIST=YES): Create `.dispatch/STATE.md` before spawning the team. Instruct the Team Lead to enforce checkpointing: teammates must write their progress to `.dispatch/{AGENT_ID}-log.md` periodically. If a teammate signals CHECKPOINT via message, the Team Lead spawns a fresh replacement pointing to the log file.
+
+## Step 7.5: Checkpoint & Continuation (if PERSIST=YES)
+
+When a subagent's output contains `<!-- CHECKPOINT:CONTINUE -->`:
+
+1. Read the agent's work log at `.dispatch/{AGENT_ID}-log.md`
+2. Spawn a **new** Agent tool call with the same role (use Continuation Agent Template from `references/prompt-templates.md`)
+3. The fresh agent reads the log and resumes from "Next Steps"
+4. Repeat until the agent completes without CHECKPOINT
+
+Agent Team mode: The Team Lead manages continuations internally — spawning fresh teammates when they signal CHECKPOINT.
+
+See `references/context-persistence-protocol.md` for the full protocol.
 
 ## Step 8: Review & Synthesize
 
@@ -180,6 +199,8 @@ Use the `TeamCreate` tool to create a team, then spawn teammates via the `Agent`
 If **ESCALATE**: Present conflicting perspectives with pros/cons. Let the user decide.
 If **APPROVE**: Synthesize into a single coherent response in `{RESPONSE_LANGUAGE}`.
 
+**Cleanup** (if PERSIST=YES): After synthesis, inform the user that dispatch state is saved in `.dispatch/`. Suggest adding `.dispatch/` to `.gitignore` if desired.
+
 ## Rules
 
 - Respond in the user's detected language
@@ -195,3 +216,5 @@ If **APPROVE**: Synthesize into a single coherent response in `{RESPONSE_LANGUAG
 - User can override dispatch mode with "use team" or "use subagents"
 - The value of role dispatch is **structured prompt framing**: forcing specialist perspective, focused scope, and domain-specific vocabulary. It does not grant capabilities the model lacks — it activates relevant knowledge more effectively
 - FAST-path tasks skip Step 6 (confirmation). SKIP tasks bypass dispatch entirely
+- Context persistence is enabled only for FULL tasks with medium-high complexity (PERSIST=YES)
+- Agents self-monitor and checkpoint; the dispatcher handles continuation spawning

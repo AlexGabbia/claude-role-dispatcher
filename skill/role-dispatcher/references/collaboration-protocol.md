@@ -183,3 +183,35 @@ When Agent Team mode is selected but the experimental flag `CLAUDE_CODE_EXPERIME
 | Quality | Higher for complex projects | Adequate for most cases |
 
 The fallback preserves the **multi-specialist perspective** (each agent still has its role identity and expertise framing) while losing real-time collaboration. For most tasks, this produces results close to full Agent Team mode.
+
+## 10. Context Persistence & Checkpoint
+
+For long-running tasks, agents use persistent work logs to prevent context rot (gradual loss of quality as the context window fills up).
+
+### When Enabled
+
+- FULL-path tasks with 3+ agents or estimated high complexity (PERSIST=YES)
+- Not used for SKIP or FAST lane tasks
+
+### How It Works
+
+1. Dispatcher creates `.dispatch/STATE.md` with global state (project goal, agent roster, key decisions)
+2. Each agent maintains `.dispatch/{AGENT_ID}-log.md` with their progress, decisions, and next steps
+3. Agents checkpoint at phase boundaries and every ~25 tool calls
+4. If continuation is needed, agent signals with `<!-- CHECKPOINT:CONTINUE -->` (subagent mode) or a CHECKPOINT message to the Team Lead (team mode)
+5. Dispatcher (or Team Lead) spawns a fresh agent pointing to the log file
+
+### Relationship with Handoff Protocol
+
+- **Handoff notes** (Section 7): pass info between DIFFERENT agents working on different domains
+- **Work logs** (this section): pass info between INSTANCES of the SAME agent across context restarts
+- Both coexist. Key decisions in the work log serve as handoff context for other agents reading STATE.md
+
+### Agent Team Integration
+
+- Team Lead enforces checkpoint discipline across teammates
+- Teammate signals CHECKPOINT via team message with the path to their log file
+- Team Lead spawns a replacement teammate with the same role + log file reference
+- Team Lead updates `.dispatch/STATE.md` to reflect the continuation
+
+Full protocol: `references/context-persistence-protocol.md`

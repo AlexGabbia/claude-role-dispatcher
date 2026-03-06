@@ -41,3 +41,4 @@ Skill per Claude Code, Codex CLI e OpenCode che analizza le richieste e dispatch
 | `references/model-selection-guide.md` | Matrice selezione modello (Haiku/Sonnet/Opus) |
 | `references/prompt-templates.md` | Template prompt strutturati per gli agenti |
 | `references/examples.md` | 6 scenari completi di dispatching |
+| `references/context-persistence-protocol.md` | Protocollo per work log agenti, checkpoint e context restart |

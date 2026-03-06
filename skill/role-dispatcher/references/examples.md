@@ -283,3 +283,149 @@ Proceed? You can:
 4. SRE messages: "Load balancer change is clean — no impact on latency"
 5. Performance Tester: "Profiling confirms 80% of latency is in DB layer, 20% in connection pool exhaustion"
 6. Team Lead synthesizes: root cause is ORM migration (N+1 + extra JOINs) compounded by connection pool misconfiguration. Proposes fix with rollback strategy.
+
+---
+
+## Example 9: Context Persistence & Checkpoint (Continuation)
+
+**User request**: "Build a complete REST API for a project management tool: user auth, teams, projects, tasks with subtasks, comments, file attachments, activity log, and role-based permissions. Use Node.js with Express and PostgreSQL."
+
+### Triage Decision
+- **Lane**: FULL
+- **Reason**: Multi-domain, high complexity, multiple interconnected features
+- **PERSIST**: YES (estimated 40+ tool calls per agent, multi-phase work)
+
+### Dispatch Decision
+- **Categories**: Software Development + Cybersecurity + Infrastructure & Ops
+- **Roles**: Backend Developer, Security Engineer, Database Administrator
+- **Independence**: DEPENDENT (schema first, then API, then security layer)
+- **Agents**: 3 (sequential)
+- **Model**: Opus (high complexity)
+
+### Context Persistence Setup
+
+Dispatcher creates `.dispatch/STATE.md` before spawning agents:
+
+```markdown
+# Dispatch State
+
+## Project Goal
+Build a complete REST API for project management with auth, teams, projects, tasks, comments, attachments, activity log, and RBAC.
+
+## Agent Roster
+
+| ID | Role | Focus Area | Status |
+|----|------|------------|--------|
+| dba-01 | Database Administrator | Schema design | IN_PROGRESS |
+| backend-01 | Backend Developer | Express API + business logic | WAITING |
+| security-01 | Security Engineer | Auth + RBAC | WAITING |
+
+## Global Decisions
+(none yet)
+
+## Status Summary
+- dba-01: Starting schema design
+```
+
+### Checkpoint Scenario
+
+The Backend Developer agent (backend-01) is dispatched after the DBA completes the schema. It works through the API endpoints but reaches ~40 tool calls after implementing 5 of 12 route groups.
+
+**Agent writes `.dispatch/backend-01-log.md`:**
+
+```markdown
+---
+agent: Backend Developer
+id: backend-01
+phase: 2 of 3
+tool_calls: ~38
+status: CHECKPOINT
+last_updated: 2026-03-06T15:45:00
+---
+
+## Completed
+- [x] Project setup (Express, TypeScript, Zod, Drizzle ORM)
+- [x] Database connection and migration runner
+- [x] Auth routes: register, login, refresh, logout
+- [x] User routes: CRUD, profile, avatar upload
+- [x] Team routes: CRUD, member management, invitations
+- [x] Project routes: CRUD, team assignment, status transitions
+- [x] Task routes: CRUD, subtasks, assignment, status workflow
+
+## In Progress
+- [ ] Comment routes (not started)
+
+## Key Decisions
+- Drizzle ORM over Prisma (better SQL control for complex queries)
+- Zod schemas co-located with route files
+- Middleware pattern: auth -> validate -> authorize -> handler
+- File uploads via multer to local disk (S3 integration left for DevOps)
+- Activity log via database triggers + explicit logging in handlers
+
+## Next Steps
+- Comment routes (CRUD, mentions, threading)
+- File attachment routes (upload, download, delete, link to tasks/comments)
+- Activity log routes (filtered timeline per project/task/user)
+- Global error handler refinement
+- Integration tests for all completed routes
+
+## Files Modified
+- src/index.ts, src/db/connection.ts, src/db/migrate.ts
+- src/middleware/auth.ts, src/middleware/validate.ts
+- src/routes/auth.ts, src/routes/users.ts, src/routes/teams.ts
+- src/routes/projects.ts, src/routes/tasks.ts
+- src/schemas/ (5 schema files)
+- src/utils/errors.ts, src/utils/pagination.ts
+```
+
+**Agent's output ends with:**
+```
+<!-- CHECKPOINT:CONTINUE -->
+Checkpoint: Work log saved to `.dispatch/backend-01-log.md`. Remaining work: comment routes, file attachments, activity log, error handler, integration tests.
+```
+
+### Continuation
+
+Dispatcher detects the CHECKPOINT signal and spawns a fresh Backend Developer agent using the **Continuation Agent Template**:
+
+```
+## Your Role: Backend Developer (Continuation)
+
+### Expertise Profile
+- **Domain**: Software Development
+- **Core competencies**: Server-side development, API design, database integration
+- **Key skills**: Node.js, Express, TypeScript, REST API, PostgreSQL, Drizzle ORM
+- **Perspective**: You approach problems as a Backend Developer with deep expertise in API architecture
+
+### Continuation Context
+You are continuing the work of a previous Backend Developer agent.
+**Read your work log first**: `.dispatch/backend-01-log.md`
+Resume from "Next Steps". Do NOT repeat completed work.
+Your tool call counter resets. Continue checkpointing as normal.
+
+### Your Task
+Build a complete REST API for a project management tool (comment routes, file attachments, activity log, error handler, integration tests).
+
+### Language
+Respond in Italian
+
+### Context Persistence
+- **Your work log**: `.dispatch/backend-01-log.md`
+- **Checkpoint frequency**: Write your work log every ~25 tool calls and at every natural phase boundary
+- **Continuation signal**: If you reach ~40 tool calls with more work remaining, write your log and end with `<!-- CHECKPOINT:CONTINUE -->`
+```
+
+The fresh agent reads the log, sees what's done and what's next, and continues building the remaining routes without repeating any work. It completes all remaining endpoints and finishes with status `COMPLETE` — no further checkpoint needed.
+
+### Final State
+
+`.dispatch/STATE.md` is updated:
+
+```markdown
+## Status Summary
+- dba-01: COMPLETE - Schema delivered (12 tables, indexes, triggers)
+- backend-01: COMPLETE - All 12 route groups implemented (continued once)
+- security-01: COMPLETE - RBAC middleware, permission matrix, security audit
+```
+
+Dispatcher proceeds to Step 8 (Review & Synthesize) with all three agents' work.

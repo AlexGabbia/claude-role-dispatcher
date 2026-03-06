@@ -59,6 +59,27 @@ For multi-agent:
 4. **Handoff Notes**: Dependencies or information that other agents need from your analysis. Be specific about what you need from them or what they should know from your work
 ```
 
+## Context Persistence Section (when PERSIST=YES)
+
+Add this section to agent prompts for FULL tasks with persistence enabled:
+
+```
+### Context Persistence
+- **Your work log**: `.dispatch/{AGENT_ID}-log.md`
+- **Checkpoint frequency**: Write your work log every ~25 tool calls and at every
+  natural phase boundary (e.g., finishing a component, completing a feature)
+- **Log format**: YAML frontmatter (agent, id, phase, tool_calls, status, last_updated)
+  + sections: Completed / In Progress / Key Decisions / Next Steps / Files Modified
+- **Max log size**: 80 lines. Summarize older completed items if needed
+- **Continuation signal**: If you reach ~40 tool calls with more work remaining,
+  write your log with status CHECKPOINT and end your response with
+  `<!-- CHECKPOINT:CONTINUE -->` plus a human-readable note about remaining work
+- **Phase-first rule**: If you are close to finishing a phase, finish it before
+  checkpointing. Clean phase boundaries make continuation smoother
+- **Self-monitoring**: If you notice yourself re-reading files already processed
+  or losing precision, checkpoint immediately
+```
+
 ## Review Agent Template
 
 Used when 2+ agents produce results that need integration:
@@ -162,6 +183,34 @@ Used for non-lead agents in Agent Team mode.
 4. **Dependencies**: What you need from or provide to other teammates
 ```
 
+## Continuation Agent Template
+
+Used when re-spawning an agent after a CHECKPOINT signal:
+
+```
+## Your Role: {ROLE_NAME} (Continuation)
+
+### Expertise Profile
+- **Domain**: {CATEGORY_NAME}
+- **Core competencies**: {ROLE_DESCRIPTION}
+- **Key skills**: {KEY_SKILLS}
+- **Perspective**: You approach problems as a {ROLE_NAME} with deep expertise in {KEY_SKILLS}
+
+### Continuation Context
+You are continuing the work of a previous {ROLE_NAME} agent.
+**Read your work log first**: `.dispatch/{AGENT_ID}-log.md`
+Resume from "Next Steps". Do NOT repeat completed work.
+Your tool call counter resets. Continue checkpointing as normal.
+
+### Your Task
+{USER_REQUEST}
+
+### Language
+Respond in {RESPONSE_LANGUAGE}
+
+{CONTEXT_PERSISTENCE_SECTION}
+```
+
 ## Quick Reference: Template Selection
 
 | Scenario | Template | Notes |
@@ -172,3 +221,4 @@ Used for non-lead agents in Agent Team mode.
 | Any multi-agent (subagents) | Standard + Review Agent | Review agent runs after all others |
 | 5+ agents or deep collaboration | Team Lead + Teammate | Agent Team mode via TeamCreate |
 | User requests "use team" | Team Lead + Teammate | Agent Team mode regardless of count |
+| Continuation after checkpoint | Continuation Agent | Read log, resume from Next Steps |
